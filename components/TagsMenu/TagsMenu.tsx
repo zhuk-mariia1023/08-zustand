@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import css from './TagsMenu.module.css';
 import type { Tag } from '@/types/note';
@@ -20,14 +20,32 @@ type TagsMenuProps = {
 
 const TagsMenu = ({ tags }: TagsMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const toggle = () => setIsOpen(!isOpen);
+  const toggle = () => setIsOpen(prev => !prev);
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   const filteredTags = tags.filter(tag =>
     allowedTags.includes(tag.name as AllowedTag)
   );
 
   return (
-    <div className={css.menuContainer}>
+    <div className={css.menuContainer} ref={menuRef}>
       <button onClick={toggle} className={css.menuButton}>
         Notes ▾
       </button>
