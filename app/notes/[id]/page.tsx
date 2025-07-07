@@ -7,11 +7,13 @@ import {
   QueryClient,
 } from '@tanstack/react-query';
 
-type Props = {
+type PageProps = {
   params: { id: string };
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const noteId = Number(params.id);
   const note = await fetchNoteById(noteId);
 
@@ -38,13 +40,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function NoteDetails({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const noteId = Number(id);
+export default async function NoteDetails({ params }: PageProps) {
+  const noteId = Number(params.id);
 
   const queryClient = new QueryClient();
 
