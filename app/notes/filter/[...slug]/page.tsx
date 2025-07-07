@@ -3,13 +3,13 @@ import { fetchNotes } from '@/lib/api';
 import NotesClient from './Notes.client';
 
 type NotesFilterPageProps = {
-  params: { slug?: string[] };
+  params: Promise<{ slug?: string[] }>;
 };
 
 export async function generateMetadata({
   params,
 }: NotesFilterPageProps): Promise<Metadata> {
-  const slug = params.slug ?? ['all'];
+  const { slug = ['all'] } = await params;
   const tag = slug[0] === 'all' ? 'All notes' : `Notes with tag "${slug[0]}"`;
   const description =
     slug[0] === 'all'
@@ -38,7 +38,7 @@ export async function generateMetadata({
 export default async function NotesFilterPage({
   params,
 }: NotesFilterPageProps) {
-  const slug = params.slug ?? ['all'];
+  const { slug = ['all'] } = await params;
   const tag = slug[0] === 'all' ? undefined : slug[0];
 
   const notesResponse = await fetchNotes(1, '', tag);

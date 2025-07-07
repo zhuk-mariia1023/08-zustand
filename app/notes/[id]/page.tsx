@@ -8,14 +8,14 @@ import {
 } from '@tanstack/react-query';
 
 type PageProps = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const noteId = Number(params.id);
-  const note = await fetchNoteById(noteId);
+  const noteId = await params;
+  const note = await fetchNoteById(Number(noteId));
 
   const title = note?.title ?? 'Note not found';
   const description =
@@ -27,7 +27,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `https://notehub.app/notes/${params.id}`,
+      url: `https://notehub.app/notes/${params}`,
       images: [
         {
           url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
@@ -41,13 +41,13 @@ export async function generateMetadata({
 }
 
 export default async function NoteDetails({ params }: PageProps) {
-  const noteId = Number(params.id);
+  const noteId = await params;
 
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
     queryKey: ['note', noteId],
-    queryFn: () => fetchNoteById(noteId),
+    queryFn: () => fetchNoteById(Number(noteId)),
   });
 
   return (
