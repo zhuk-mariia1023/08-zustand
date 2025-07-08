@@ -14,8 +14,8 @@ type PageProps = {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const noteId = await params;
-  const note = await fetchNoteById(Number(noteId));
+  const { id } = await params;
+  const note = await fetchNoteById(Number(id));
 
   const title = note?.title ?? 'Note not found';
   const description =
@@ -27,13 +27,15 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `https://notehub.app/notes/${params}`,
+      url: `https://notehub.app/notes/${id}`,
       images: [
         {
           url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
           width: 1200,
           height: 630,
-          alt: 'NoteHub App Open Graph Image',
+          alt: note?.title
+            ? `Open Graph image for note "${note.title}"`
+            : 'Open Graph image for missing note',
         },
       ],
     },
@@ -41,13 +43,13 @@ export async function generateMetadata({
 }
 
 export default async function NoteDetails({ params }: PageProps) {
-  const noteId = await params;
+  const { id } = await params;
 
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['note', noteId],
-    queryFn: () => fetchNoteById(Number(noteId)),
+    queryKey: ['note', id],
+    queryFn: () => fetchNoteById(Number(id)),
   });
 
   return (

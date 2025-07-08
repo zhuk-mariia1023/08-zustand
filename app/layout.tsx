@@ -38,8 +38,8 @@ export default function RootLayout({
   modal: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={roboto.variable}>
-      <body>
+    <html lang="en">
+      <body className={roboto.variable}>
         <div className="page-body">
           <TanStackProvider>
             <Header />

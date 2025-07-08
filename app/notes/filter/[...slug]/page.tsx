@@ -16,6 +16,11 @@ export async function generateMetadata({
       ? 'Browse all notes in NoteHub.'
       : `Browse notes filtered by the "${slug[0]}" tag in NoteHub.`;
 
+  const altText =
+    slug[0] === 'all'
+      ? 'Open Graph image for all notes in NoteHub'
+      : `Open Graph image for notes with tag "${slug[0]}"`;
+
   return {
     title: tag,
     description,
@@ -28,7 +33,7 @@ export async function generateMetadata({
           url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
           width: 1200,
           height: 630,
-          alt: 'NoteHub App Open Graph Image',
+          alt: altText,
         },
       ],
     },
