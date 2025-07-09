@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createNote } from '@/lib/api';
@@ -12,7 +11,6 @@ export default function NoteForm() {
   const queryClient = useQueryClient();
 
   const { draft, setDraft, clearDraft } = useNoteStore();
-  const [formData, setFormData] = useState({ ...draft });
 
   const { mutate, isPending } = useMutation({
     mutationFn: createNote,
@@ -32,14 +30,12 @@ export default function NoteForm() {
     >
   ) => {
     const { name, value } = e.target;
-    const updated = { ...formData, [name]: value };
-    setFormData(updated);
-    setDraft(updated);
+    setDraft({ [name]: value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutate(formData);
+    mutate(draft);
   };
 
   const handleCancel = () => {
@@ -55,7 +51,7 @@ export default function NoteForm() {
           name="title"
           type="text"
           className={css.input}
-          value={formData.title}
+          value={draft.title}
           onChange={handleChange}
           required
           minLength={3}
@@ -70,7 +66,7 @@ export default function NoteForm() {
           name="content"
           className={css.textarea}
           rows={8}
-          value={formData.content}
+          value={draft.content}
           onChange={handleChange}
           maxLength={500}
         />
@@ -82,7 +78,7 @@ export default function NoteForm() {
           id="tag"
           name="tag"
           className={css.select}
-          value={formData.tag}
+          value={draft.tag}
           onChange={handleChange}
           required
         >
