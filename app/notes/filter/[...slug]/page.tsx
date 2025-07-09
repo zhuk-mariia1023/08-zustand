@@ -3,21 +3,23 @@ import { fetchNotes } from '@/lib/api';
 import NotesClient from './Notes.client';
 
 type NotesFilterPageProps = {
-  params: Promise<{ slug?: string[] }>;
+  params: Promise<{ slug: string[] }>;
 };
 
 export async function generateMetadata({
   params,
 }: NotesFilterPageProps): Promise<Metadata> {
-  const { slug = ['all'] } = await params;
-  const tag = slug[0] === 'all' ? 'All notes' : `Notes with tag "${slug[0]}"`;
+  const { slug } = await params;
+  const tagParam = slug[0]?.toLowerCase();
+
+  const tag = tagParam === 'all' ? 'All notes' : `Notes with tag "${slug[0]}"`;
   const description =
-    slug[0] === 'all'
+    tagParam === 'all'
       ? 'Browse all notes in NoteHub.'
       : `Browse notes filtered by the "${slug[0]}" tag in NoteHub.`;
 
   const altText =
-    slug[0] === 'all'
+    tagParam === 'all'
       ? 'Open Graph image for all notes in NoteHub'
       : `Open Graph image for notes with tag "${slug[0]}"`;
 
@@ -43,8 +45,9 @@ export async function generateMetadata({
 export default async function NotesFilterPage({
   params,
 }: NotesFilterPageProps) {
-  const { slug = ['all'] } = await params;
-  const tag = slug[0] === 'all' ? undefined : slug[0];
+  const { slug } = await params;
+  const tagParam = slug[0]?.toLowerCase();
+  const tag = tagParam === 'all' ? undefined : slug[0];
 
   const notesResponse = await fetchNotes(1, '', tag);
 
